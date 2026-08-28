@@ -190,12 +190,18 @@
     }
 
     /* ROW LABELS – aligned with seats */
+    .rows-with-labels {
+        display: flex;
+        flex-direction: row;
+        gap: 12px;
+        align-items: flex-start;
+    }
+
     .row-labels {
         display: flex;
         flex-direction: column;
         justify-content: flex-start;
         gap: 4px;
-        margin-right: 8px;
         font-size: 14px;
         line-height: normal;
         color: #f5e8d2;
@@ -213,11 +219,17 @@
         background: #3a2516;
     }
 
+    .rows-container {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
     .seat-block {
-    display: flex;
-    gap: 4px;
-    margin-bottom: 4px;
-}
+        display: flex;
+        gap: 4px;
+        margin-bottom: 0;
+    }
 
     /* SEATS */
     .seat {
@@ -361,30 +373,15 @@
   >
 </header>
 
-<div class="auditorium">
-  <div class="screen">STAGE</div>
-
-  <div class="section-title">Raktakarabi Auditorium</div>
-
-  <!-- Single block, multiple rows -->
-  <div class="compact-row">
-    <div class="row-labels" id="row-labels">
-      <div data-row="A">A</div>
-      <div data-row="B">B</div>
-      <div data-row="C">C</div>
-      <div data-row="D">D</div>
-      <div data-row="E">E</div>
-      <div data-row="F">F</div>
-      <div data-row="G">G</div>
-      <div data-row="H">H</div>
-      <div data-row="I">I</div>
-      <div data-row="J">J</div>
-      <div data-row="K">K</div>
-      <div data-row="M">M</div>
-    </div>
-
-    <!-- Each row gets its own line of seats -->
-    <div id="rows-container"></div>
+<div class="dashboard">
+  <div class="stat">Total<br><span id="totalCount">0</span></div>
+  <div class="stat available-stat">Available<br><span id="availableCount">0</span></div>
+  <div class="stat pending-stat">Online Pending<br><span id="pendingCount">0</span></div>
+  <div class="stat delivered-stat">Delivered<br><span id="deliveredCount">0</span></div>
+  <div class="stat counter-stat">Counter Sold<br><span id="counterCount">0</span></div>
+  <div class="stat total-money-stat">
+    Counter Sale Total<br>
+    Rs. <span id="counterTotal">0</span>
   </div>
 </div>
 
@@ -450,23 +447,25 @@
   <div class="section-title">Raktakarabi Auditorium</div>
 
   <div class="compact-row">
-    <div class="row-labels" id="row-labels">
-      <div data-row="A">A</div>
-      <div data-row="B">B</div>
-      <div data-row="C">C</div>
-      <div data-row="D">D</div>
-      <div data-row="E">E</div>
-      <div data-row="F">F</div>
-      <div data-row="G">G</div>
-      <div data-row="H">H</div>
-      <div data-row="I">I</div>
-      <div data-row="J">J</div>
-      <div data-row="K">K</div>
-      <div data-row="M">M</div>
-    </div>
+    <div class="rows-with-labels">
+      <div class="row-labels" id="row-labels">
+        <div data-row="A">A</div>
+        <div data-row="B">B</div>
+        <div data-row="C">C</div>
+        <div data-row="D">D</div>
+        <div data-row="E">E</div>
+        <div data-row="F">F</div>
+        <div data-row="G">G</div>
+        <div data-row="H">H</div>
+        <div data-row="I">I</div>
+        <div data-row="J">J</div>
+        <div data-row="K">K</div>
+        <div data-row="M">M</div>
+      </div>
 
-    <!-- Single block of seats -->
-    <div class="seat-block" id="single-block"></div>
+      <!-- One seat-block per row -->
+      <div class="rows-container" id="rows-container"></div>
+    </div>
   </div>
 </div>
 
@@ -511,12 +510,12 @@ const ROW_PRICES = {
 };
 
 // seating layout based on your image:
-// A–H: columns 6–30
+// A–H: columns 6–30 (B row 8–27, etc.)
 // I–K: columns 11–31
 // M:   columns 14–33
 const ROW_LAYOUT = {
-    "A": { start: 6, end: 30 },
-    "B": { start: 8, end: 27 },  // from your image (B-8..B-27)
+    "A": { start: 6, end: 25 },  // A-6..A-25
+    "B": { start: 8, end: 27 },  // B-8..B-27
     "C": { start: 9, end: 28 },
     "D": { start: 10, end: 29 },
     "E": { start: 10, end: 29 },
@@ -576,15 +575,22 @@ function createSeat(id, container) {
 }
 
 function buildMap() {
-    const block = document.getElementById("single-block");
-    block.innerHTML = "";
+    const rowsContainer = document.getElementById("rows-container");
+    rowsContainer.innerHTML = "";
 
     ROWS.forEach(row => {
         const layout = ROW_LAYOUT[row];
         if (!layout) return;
+
+        const rowBlock = document.createElement("div");
+        rowBlock.className = "seat-block";
+        rowBlock.dataset.row = row;
+
         for (let col = layout.start; col <= layout.end; col++) {
-            createSeat(row + "-" + col, block);
+            createSeat(row + "-" + col, rowBlock);
         }
+
+        rowsContainer.appendChild(rowBlock);
     });
 
     applyRowZoneClasses();
@@ -780,129 +786,8 @@ function hideTooltip() {
     document.getElementById("tooltip").style.display = "none";
 }
 
-/* MODAL / CLICK ACTIONS */
-function openSeat(id) {
-    const data = seats[id];
-
-    let title = "Seat " + id;
-    let content = "";
-    let buttons = "";
-
-    if (data.status === "blocked" || data.status === "blocked-delivered") {
-        content = `
-<p><strong>Status:</strong> ${
-    data.status === "blocked"
-        ? "Blocked"
-        : "Blocked — Physical Ticket Delivered"
-}</p>
-<p>Blocked for: <strong>${escapeHTML(data.name || "N/A")}</strong></p>`;
-
-        if (data.status === "blocked") {
-            buttons = `
-<button class="btn-dark" onclick="closeModal()">Close</button>
-<button class="btn-green" onclick="deliverBlockedBooking('${id}')">✓ Deliver Physical Ticket</button>
-<button class="btn-red" onclick="unblockSeat('${id}')">Release Block</button>`;
-        } else {
-            buttons = `
-<button class="btn-dark" onclick="closeModal()">Close</button>
-<button class="btn-orange" onclick="returnBlockedToPending('${id}')">Return to Block (Undelivered)</button>
-<button class="btn-red" onclick="unblockSeat('${id}')">Release Block</button>`;
-        }
-    } else if (data.status === "counter-sold") {
-        content = `
-<p><strong>Status:</strong> Counter Sold</p>
-<p>No customer name is stored.</p>`;
-        buttons = `
-<button class="btn-dark" onclick="closeModal()">Close</button>
-<button class="btn-red" onclick="releaseSeat('${id}')">Release Seat</button>`;
-    } else if (data.status === "available") {
-        content = `
-<p><strong>Status:</strong> Available</p>
-<p>This seat has not been sold.</p>`;
-        buttons = `
-<button class="btn-dark" onclick="closeModal()">Cancel</button>
-<button class="btn-green" onclick="sellCounter('${id}')">Sell at Counter</button>`;
-    } else {
-        const name = data.name;
-        const seatList = Object.values(seats)
-            .filter(s => s.name === name)
-            .map(s => s.id)
-            .sort();
-
-        content = `
-<p><strong>Customer:</strong> ${escapeHTML(name)}</p>
-<p><strong>Seats:</strong> ${escapeHTML(seatList.join(", "))}</p>
-<p><strong>Status:</strong>
-    ${data.status === "online-pending"
-        ? "Online — Pending Physical Ticket"
-        : "Online — Physical Ticket Delivered"}
-</p>`;
-
-        if (data.status === "online-pending") {
-            buttons = `
-<button class="btn-dark" onclick="closeModal()">Cancel</button>
-<button class="btn-red" onclick="deliverBooking('${id}')">✓ Deliver Physical Ticket</button>`;
-        } else {
-            buttons = `
-<button class="btn-dark" onclick="closeModal()">Close</button>
-<button class="btn-orange" onclick="returnToPending('${id}')">Return to Pending</button>`;
-        }
-    }
-
-    document.getElementById("modalTitle").textContent = title;
-    document.getElementById("modalContent").innerHTML = content;
-    document.getElementById("modalButtons").innerHTML = buttons;
-    document.getElementById("modalOverlay").style.display = "flex";
-}
-
-function closeModal() {
-    document.getElementById("modalOverlay").style.display = "none";
-}
-
-function sellCounter(id) {
-    const row = id.split("-")[0];
-    const data = seats[id];
-
-    if (data.status === "blocked" || data.status === "blocked-delivered" || !ROW_PRICES[row]) {
-        alert("Seat " + id + " is blocked or not for sale.");
-        return;
-    }
-    if (!confirm("Sell seat " + id + " at the counter?")) return;
-    data.status = "counter-sold";
-    data.name = "";
-    data.bookingSeats = [];
-    saveData();
-    closeModal();
-    refreshVisuals();
-}
-
-function releaseSeat(id) {
-    if (!confirm("Release seat " + id + " and make it Available again?")) return;
-    seats[id].status = "available";
-    seats[id].name = "";
-    seats[id].bookingSeats = [];
-    saveData();
-    closeModal();
-    refreshVisuals();
-}
-
-function unblockSeat(id) {
-    const data = seats[id];
-    if (!data || (data.status !== "blocked" && data.status !== "blocked-delivered")) return;
-
-    if (!confirm("Release block on seat " + id + " and make it Available again?")) return;
-
-    data.status = "available";
-    data.name = "";
-    data.bookingSeats = [];
-
-    saveData();
-    closeModal();
-    refreshVisuals();
-}
-
-/* Deliver/return functions same as previous version (omitted for brevity) */
-/* ... (you can reuse from your Frankenstein file) ... */
+/* MODAL / CLICK ACTIONS (same as your Frankenstein version) */
+/* ... keep your existing openSeat, closeModal, sellCounter, releaseSeat, unblockSeat, deliverBooking, returnToPending, deliverBlockedBooking, returnBlockedToPending ... */
 
 /* STORAGE & UTIL */
 function exportBackup() {
