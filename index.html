@@ -362,15 +362,30 @@
   >
 </header>
 
-<div class="dashboard">
-  <div class="stat">Total<br><span id="totalCount">0</span></div>
-  <div class="stat available-stat">Available<br><span id="availableCount">0</span></div>
-  <div class="stat pending-stat">Online Pending<br><span id="pendingCount">0</span></div>
-  <div class="stat delivered-stat">Delivered<br><span id="deliveredCount">0</span></div>
-  <div class="stat counter-stat">Counter Sold<br><span id="counterCount">0</span></div>
-  <div class="stat total-money-stat">
-    Counter Sale Total<br>
-    Rs. <span id="counterTotal">0</span>
+<div class="auditorium">
+  <div class="screen">STAGE</div>
+
+  <div class="section-title">Raktakarabi Auditorium</div>
+
+  <!-- Single block, multiple rows -->
+  <div class="compact-row">
+    <div class="row-labels" id="row-labels">
+      <div data-row="A">A</div>
+      <div data-row="B">B</div>
+      <div data-row="C">C</div>
+      <div data-row="D">D</div>
+      <div data-row="E">E</div>
+      <div data-row="F">F</div>
+      <div data-row="G">G</div>
+      <div data-row="H">H</div>
+      <div data-row="I">I</div>
+      <div data-row="J">J</div>
+      <div data-row="K">K</div>
+      <div data-row="M">M</div>
+    </div>
+
+    <!-- Each row gets its own line of seats -->
+    <div id="rows-container"></div>
   </div>
 </div>
 
