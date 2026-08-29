@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+en<head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Raktakarabi Auditorium Seat Management</title>
@@ -486,31 +486,18 @@ let seats = {};
 let lockedRows = {};
 let counterSaleTotal = 0; // money to collect for selected counter seats
 
-/* PRICE MAP – per your request
-   A–E: 700
-   F–J: 500
-   K:   200
-   M:   100
-*/
+/* PRICE MAP – per your request */
 const ROW_PRICES = {
-    "A": 700,
-    "B": 700,
-    "C": 700,
-    "D": 700,
-    "E": 700,
-    "F": 500,
-    "G": 500,
-    "H": 500,
-    "I": 500,
-    "J": 500,
+    "A": 700, "B": 700, "C": 700, "D": 700, "E": 700,
+    "F": 500, "G": 500, "H": 500, "I": 500, "J": 500,
     "K": 200,
     "M": 100
 };
 
 // layout from your chart (I–K have one extra seat at right)
 const ROW_LAYOUT = {
-    "A": { start: 6,  end: 25 },  // A-6..A-25
-    "B": { start: 8,  end: 27 },  // B-8..B-27
+    "A": { start: 6,  end: 25 },
+    "B": { start: 8,  end: 27 },
     "C": { start: 9,  end: 28 },
     "D": { start: 10, end: 29 },
     "E": { start: 10, end: 29 },
@@ -774,17 +761,12 @@ function showTooltip(event, id) {
 function moveTooltip(event) {
     const tooltip = document.getElementById("tooltip");
     tooltip.style.left = (event.clientX + 15) + "px";
-    tooltip.style.top  = (event.clientX + 15) + "px";
+    tooltip.style.top  = (event.clientY + 15) + "px";
 }
 
 function hideTooltip() {
     document.getElementById("tooltip").style.display = "none";
 }
-
-/* MODAL / CLICK ACTIONS – same as Frankenstein (you already used these) */
-// ... (keep openSeat, closeModal, sellCounter, releaseSeat, unblockSeat,
-//      deliverBooking, returnToPending, deliverBlockedBooking, returnBlockedToPending)
-// For brevity, I won't repeat them again here.
 
 /* CSV IMPORT (Name,Seat) */
 function addOnlineBooking(name, bookingSeats) {
