@@ -411,7 +411,8 @@
   >
   <button class="btn-green" onclick="sellSelectedCounter()">Sell Selected at Counter</button>
   <button class="btn-dark" onclick="blockSelectedSeats()">Block Selected Seats</button>
-  <button class="btn-dark" onclick="importThirdbellText()">Paste Thirdbell List</button>
+  <button class="btn-orange" onclick="importCSV()">Import Online CSV</button>
+  <button class="btn-dark" onclick="importVendorText()">Paste Vendor List</button>
   <button class="btn-dark" onclick="exportBackup()">Backup</button>
   <button class="btn-dark" onclick="restoreBackup()">Restore</button>
   <button class="btn-dark" onclick="exportCSV()">Export CSV</button>
@@ -1129,10 +1130,87 @@ Status: ${statusText}
     resultBox.style.display = "block";
 }
 
-/* PASTE Thirdbell LIST (Name,OrderId,Seat) */
-function importThirdbellText() {
+/* CSV IMPORT (Name,OrderId,Seat) for Raktakarabi */
+function addOnlineBooking(rawName, orderId, bookingSeats) {
+    const bookingKey = rawName + " | " + orderId;
+    bookingSeats.forEach(id => {
+        if (!seats[id]) {
+            console.warn("Seat from CSV not in map:", id);
+            return;
+        }
+        seats[id].status = "online-pending";
+        seats[id].name = rawName;
+        seats[id].bookingKey = bookingKey;
+        seats[id].bookingSeats = bookingSeats;
+    });
+}
+
+function importCSV() {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = ".csv";
+
+    input.onchange = event => {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = e => {
+            const text = e.target.result;
+            const lines = text.split(/\r?\n/).filter(line => line.trim().length > 0);
+            let importedCount = 0;
+
+            let startIndex = 0;
+            const firstLineLower = lines[0].toLowerCase();
+            if (firstLineLower.includes("name") && firstLineLower.includes("order")) {
+                startIndex = 1;
+            }
+
+            const seatPattern = /^[A-Z]-\d{1,2}$/i;
+            const bookingsByKey = {};
+
+            for (let i = startIndex; i < lines.length; i++) {
+                const rawLine = lines[i];
+                const line = rawLine.trim();
+                if (!line) continue;
+
+                const parts = line.split(",");
+                if (parts.length < 3) continue;
+
+                const rawName = parts[0].trim();
+                const orderId = parts[1].trim();
+                const seatStr = parts[2].trim();
+                if (!rawName || !orderId || !seatStr) continue;
+
+                const seatId = seatStr.toUpperCase();
+                if (!seatPattern.test(seatId)) continue;
+
+                const key = rawName + " | " + orderId;
+                if (!bookingsByKey[key]) {
+                    bookingsByKey[key] = { name: rawName, orderId, seats: [] };
+                }
+                bookingsByKey[key].seats.push(seatId);
+            }
+
+            Object.values(bookingsByKey).forEach(b => {
+                addOnlineBooking(b.name, b.orderId, b.seats);
+                importedCount++;
+            });
+
+            refreshVisuals();
+            alert("CSV import completed: " + importedCount + " booking(s).");
+        };
+
+        reader.readAsText(file);
+    };
+
+    input.click();
+}
+
+/* PASTE VENDOR LIST (Name,OrderId,Seat) */
+function importVendorText() {
     const text = prompt(
-        "Paste Thirdbell Name,OrderId,Seat list here (one entry per line):\n\n" +
+        "Paste vendor Name,OrderId,Seat list here (one entry per line):\n\n" +
         "Example:\nName,OrderId,Seat\nAnubhav Ghosh,1046881,G-12\n..."
     );
     if (text === null) return;
@@ -1182,7 +1260,7 @@ function importThirdbellText() {
     });
 
     refreshVisuals();
-    alert("Thirdbell list import completed: " + importedCount + " booking(s).");
+    alert("Vendor list import completed: " + importedCount + " booking(s).");
 }
 
 /* STORAGE & UTIL */
