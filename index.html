@@ -411,7 +411,7 @@
   >
   <button class="btn-green" onclick="sellSelectedCounter()">Sell Selected at Counter</button>
   <button class="btn-dark" onclick="blockSelectedSeats()">Block Selected Seats</button>
-  <button class="btn-dark" onclick="importVendorText()">Paste Thirdbell List</button>
+  <button class="btn-dark" onclick="importThirdbellText()">Paste Thirdbell List</button>
   <button class="btn-dark" onclick="exportBackup()">Backup</button>
   <button class="btn-dark" onclick="restoreBackup()">Restore</button>
   <button class="btn-dark" onclick="exportCSV()">Export CSV</button>
@@ -1129,10 +1129,10 @@ Status: ${statusText}
     resultBox.style.display = "block";
 }
 
-/* PASTE VENDOR LIST (Name,OrderId,Seat) */
-function importVendorText() {
+/* PASTE Thirdbell LIST (Name,OrderId,Seat) */
+function importThirdbellText() {
     const text = prompt(
-        "Paste vendor Name,OrderId,Seat list here (one entry per line):\n\n" +
+        "Paste Thirdbell Name,OrderId,Seat list here (one entry per line):\n\n" +
         "Example:\nName,OrderId,Seat\nAnubhav Ghosh,1046881,G-12\n..."
     );
     if (text === null) return;
@@ -1182,7 +1182,7 @@ function importVendorText() {
     });
 
     refreshVisuals();
-    alert("Vendor list import completed: " + importedCount + " booking(s).");
+    alert("Thirdbell list import completed: " + importedCount + " booking(s).");
 }
 
 /* STORAGE & UTIL */
