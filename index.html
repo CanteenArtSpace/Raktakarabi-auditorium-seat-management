@@ -224,28 +224,29 @@
         gap: 4px;
     }
 
-    /* SEAT BLOCK: curved rows towards stage */
+    /* SEAT BLOCK: gently arced towards the stage (top) */
     .seat-block {
         display: flex;
         gap: 4px;
         transform-origin: center center;
     }
 
-    /* Front rows bend more towards stage, back rows slightly away.
-       Fine-tune angles/offsets to taste. */
-    .row-A { transform: rotate(-5deg) translateY(6px); }
-    .row-B { transform: rotate(-4deg) translateY(5px); }
-    .row-C { transform: rotate(-3deg) translateY(4px); }
-    .row-D { transform: rotate(-2deg) translateY(3px); }
-    .row-E { transform: rotate(-1deg) translateY(2px); }
+    /* Middle/front rows closer to stage (move UP), outer rows further (move DOWN).
+       Adjust the pixel values to tune the curve. */
+    .row-A { transform: translateY(-22px); }
+    .row-B { transform: translateY(-18px); }
+    .row-C { transform: translateY(-14px); }
+    .row-D { transform: translateY(-10px); }
+    .row-E { transform: translateY(-6px); }
 
-    .row-F { transform: rotate(0deg); }
-    .row-G { transform: rotate(1deg) translateY(-1px); }
-    .row-H { transform: rotate(2deg) translateY(-2px); }
-    .row-I { transform: rotate(3deg) translateY(-3px); }
-    .row-J { transform: rotate(4deg) translateY(-4px); }
-    .row-K { transform: rotate(5deg) translateY(-5px); }
-    .row-M { transform: rotate(6deg) translateY(-6px); }
+    .row-F { transform: translateY(-3px); }
+    .row-G { transform: translateY(0); }
+    .row-H { transform: translateY(3px); }
+    .row-I { transform: translateY(6px); }
+    .row-J { transform: translateY(9px); }
+
+    .row-K { transform: translateY(12px); }
+    .row-M { transform: translateY(16px); }
 
     /* SEATS */
     .seat {
@@ -573,7 +574,7 @@ function buildMap() {
         const layout = ROW_LAYOUT[row];
         if (!layout) return;
         const rowBlock = document.createElement("div");
-        // ADD row-specific class for curved effect
+        // row-specific class for curved effect
         rowBlock.className = "seat-block row-" + row;
         rowBlock.dataset.row = row;
         for (let col = layout.start; col <= layout.end; col++) {
@@ -762,7 +763,7 @@ function hideTooltip() {
     document.getElementById("tooltip").style.display = "none";
 }
 
-/* MODAL / CLICK ACTIONS – full Frankenstein logic */
+/* MODAL / CLICK ACTIONS */
 function openSeat(id) {
     const data = seats[id];
 
@@ -1102,7 +1103,7 @@ Status: ${statusText}
     resultBox.style.display = "block";
 }
 
-/* CSV IMPORT & PASTE VENDOR LIST (placeholder stubs so code runs) */
+/* IMPORT PLACEHOLDERS */
 function importCSV() {
     alert("CSV import logic not included in this snippet.");
 }
