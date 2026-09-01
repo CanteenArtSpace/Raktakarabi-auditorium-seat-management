@@ -1,8 +1,9 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Raktakarabi Auditorium Seat Management</title>
 <style>
     * { box-sizing: border-box; }
@@ -383,131 +384,108 @@
 </head>
 <body>
 <header>
-  <img
-    src="raktakarabi-header.jpg"
-    alt="Raktakarabi production poster"
-  >
+<img alt="Raktakarabi production poster" src="raktakarabi-header.jpg"/>
 </header>
-
 <div class="dashboard">
-  <div class="stat">Total<br><span id="totalCount">0</span></div>
-  <div class="stat available-stat">Available<br><span id="availableCount">0</span></div>
-  <div class="stat pending-stat">Online Pending<br><span id="pendingCount">0</span></div>
-  <div class="stat delivered-stat">Delivered<br><span id="deliveredCount">0</span></div>
-  <div class="stat counter-stat">Counter Sold<br><span id="counterCount">0</span></div>
-  <div class="stat total-money-stat">
-    Counter Sale Total<br>
+<div class="stat">Total<br/><span id="totalCount">0</span></div>
+<div class="stat available-stat">Available<br/><span id="availableCount">0</span></div>
+<div class="stat pending-stat">Online Pending<br/><span id="pendingCount">0</span></div>
+<div class="stat delivered-stat">Delivered<br/><span id="deliveredCount">0</span></div>
+<div class="stat counter-stat">Counter Sold<br/><span id="counterCount">0</span></div>
+<div class="stat total-money-stat">
+    Counter Sale Total<br/>
     Rs. <span id="counterTotal">0</span>
-  </div>
 </div>
-
+</div>
 <div class="controls">
-  <input
-    id="searchBox"
-    class="search"
-    type="text"
-    placeholder="Search name or seat (e.g. B-12)..."
-    oninput="handleSearchInput()"
-  >
-  <button class="btn-green" onclick="sellSelectedCounter()">Sell Selected at Counter</button>
-  <button class="btn-dark" onclick="blockSelectedSeats()">Block Selected Seats</button>
-  <button class="btn-orange" onclick="importCSV()">Import Online CSV</button>
-  <button class="btn-dark" onclick="importVendorText()">Paste Vendor List</button>
-  <button class="btn-dark" onclick="exportBackup()">Backup</button>
-  <button class="btn-dark" onclick="restoreBackup()">Restore</button>
-  <button class="btn-dark" onclick="exportCSV()">Export CSV</button>
-  <button class="btn-dark" onclick="clearSelectedSeats()">Clear Selected</button>
-</div>
+<input class="search" id="searchBox" oninput="handleSearchInput()" placeholder="Search name or seat (e.g. B-12)..." type="text"/>
+<button class="btn-green" onclick="sellSelectedCounter()">Sell Selected at Counter</button>
+<button class="btn-dark" onclick="blockSelectedSeats()">Block Selected Seats</button>
 
+<button class="btn-dark" onclick="importVendorText()">Paste Vendor List</button>
+<button class="btn-dark" onclick="exportBackup()">Backup</button>
+<button class="btn-dark" onclick="restoreBackup()">Restore</button>
+<button class="btn-dark" onclick="exportCSV()">Export CSV</button>
+<button class="btn-dark" onclick="clearSelectedSeats()">Clear Selected</button>
+</div>
 <div class="reset-area">
-  <button class="btn-red" onclick="resetAll()">
+<button class="btn-red" onclick="resetAll()">
     DANGER: FULL RESET (USE ONLY IN EMERGENCY)
   </button>
-  <p class="reset-warning">
+<p class="reset-warning">
     This will permanently erase all online, blocked, and counter-sale data stored in this browser for the Raktakarabi auditorium.
     Make sure you have exported a backup CSV/JSON before using.
   </p>
 </div>
-
 <div class="search-results" id="searchResults"></div>
-
 <!-- Seat status legend -->
 <div class="legend">
-  <div class="legend-item">
-    <div class="legend-box legend-available"></div>Available
+<div class="legend-item">
+<div class="legend-box legend-available"></div>Available
   </div>
-  <div class="legend-item">
-    <div class="legend-box legend-pending"></div>Online Pending
+<div class="legend-item">
+<div class="legend-box legend-pending"></div>Online Pending
   </div>
-  <div class="legend-item">
-    <div class="legend-box legend-delivered"></div>Delivered (Online + Blocked)
+<div class="legend-item">
+<div class="legend-box legend-delivered"></div>Delivered (Online + Blocked)
   </div>
-  <div class="legend-item">
-    <div class="legend-box legend-counter"></div>Counter Sold
+<div class="legend-item">
+<div class="legend-box legend-counter"></div>Counter Sold
   </div>
-  <div class="legend-item">
-    <div class="legend-box legend-blocked"></div>Blocked (Reserve)
+<div class="legend-item">
+<div class="legend-box legend-blocked"></div>Blocked (Reserve)
   </div>
 </div>
-
 <!-- Ticket category legend -->
 <div class="ticket-legend">
-  <div class="ticket-legend-item">
-    <div class="ticket-legend-box zone-700"></div>Rows A–E (₹700)
+<div class="ticket-legend-item">
+<div class="ticket-legend-box zone-700"></div>Rows A–E (₹700)
   </div>
-  <div class="ticket-legend-item">
-    <div class="ticket-legend-box zone-500"></div>Rows F–J (₹500)
+<div class="ticket-legend-item">
+<div class="ticket-legend-box zone-500"></div>Rows F–J (₹500)
   </div>
-  <div class="ticket-legend-item">
-    <div class="ticket-legend-box zone-200"></div>Row K (₹200)
+<div class="ticket-legend-item">
+<div class="ticket-legend-box zone-200"></div>Row K (₹200)
   </div>
-  <div class="ticket-legend-item">
-    <div class="ticket-legend-box zone-100"></div>Row M (₹100)
+<div class="ticket-legend-item">
+<div class="ticket-legend-box zone-100"></div>Row M (₹100)
   </div>
 </div>
-
 <div class="auditorium">
-  <div class="screen">STAGE</div>
-
-  <div class="section-title">Raktakarabi Auditorium</div>
-
-  <div class="compact-row">
-    <div class="rows-with-labels">
-      <div class="row-labels" id="row-labels">
-        <div data-row="A">A</div>
-        <div data-row="B">B</div>
-        <div data-row="C">C</div>
-        <div data-row="D">D</div>
-        <div data-row="E">E</div>
-        <div data-row="F">F</div>
-        <div data-row="G">G</div>
-        <div data-row="H">H</div>
-        <div data-row="I">I</div>
-        <div data-row="J">J</div>
-        <div data-row="K">K</div>
-        <div data-row="M">M</div>
-      </div>
-
-      <!-- One seat-block per row -->
-      <div class="rows-container" id="rows-container"></div>
-    </div>
-  </div>
+<div class="screen">STAGE</div>
+<div class="section-title">Raktakarabi Auditorium</div>
+<div class="compact-row">
+<div class="rows-with-labels">
+<div class="row-labels" id="row-labels">
+<div data-row="A">A</div>
+<div data-row="B">B</div>
+<div data-row="C">C</div>
+<div data-row="D">D</div>
+<div data-row="E">E</div>
+<div data-row="F">F</div>
+<div data-row="G">G</div>
+<div data-row="H">H</div>
+<div data-row="I">I</div>
+<div data-row="J">J</div>
+<div data-row="K">K</div>
+<div data-row="M">M</div>
 </div>
-
+<!-- One seat-block per row -->
+<div class="rows-container" id="rows-container"></div>
+</div>
+</div>
+</div>
 <div class="footer">
   Offline Raktakarabi Auditorium Seat Management System
 </div>
-
 <div class="tooltip" id="tooltip"></div>
-
 <div class="modal-overlay" id="modalOverlay">
-  <div class="modal">
-    <h2 id="modalTitle">Seat Information</h2>
-    <div id="modalContent"></div>
-    <div class="modal-buttons" id="modalButtons"></div>
-  </div>
+<div class="modal">
+<h2 id="modalTitle">Seat Information</h2>
+<div id="modalContent"></div>
+<div class="modal-buttons" id="modalButtons"></div>
 </div>
-
+</div>
 <script>
 let seats = {};
 let lockedRows = {};
